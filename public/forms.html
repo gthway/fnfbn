@@ -1,0 +1,17 @@
+<!--
+  Netlify Forms detection stub.
+  Netlify scans static HTML at build time to register forms.
+  Keep this file in sync with the actual contact form component
+  (same name + same field names + same `data-netlify="true"`).
+-->
+<!doctype html>
+<html>
+  <body>
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="text" name="bot-field" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+  </body>
+</html>

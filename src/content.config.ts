@@ -1,0 +1,29 @@
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+const bilingual = z.object({ de: z.string(), en: z.string() });
+
+const locations = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: 'src/content/locations' }),
+  schema: z.object({
+    title: bilingual,
+    address: bilingual,
+    dates: bilingual,
+    image: z.string().optional(),
+    link: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+const contributors = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: 'src/content/contributors' }),
+  schema: z.object({
+    name: z.string(),
+    role: bilingual,
+    photo: z.string().optional(),
+    link: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = { locations, contributors };
