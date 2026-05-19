@@ -4,4 +4,10 @@ heading:
 intro:
   de: "Fragen? Mitwirken? Sende uns eine Nachricht."
   en: "Do you have any questions? Would you like to contribute? Send us a message below."
+successTitle:
+  de: "Danke, super!"
+  en: "Thanks!"
+successBody:
+  de: "Wir haben deine Nachricht erhalten und melden uns bald bei dir."
+  en: "We got your message and will be in touch soon."
 recipientEmail: ""

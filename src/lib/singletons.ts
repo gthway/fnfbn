@@ -28,6 +28,8 @@ export interface HeadingOnly {
 export interface ContactData {
   heading: Bilingual;
   intro: Bilingual;
+  successTitle: Bilingual;
+  successBody: Bilingual;
   recipientEmail?: string;
 }
 
@@ -67,7 +69,12 @@ export const getTeamIntro = () => read<SectionTextData>('team-intro', { heading:
 export const getContributorsSection = () => read<HeadingOnly>('contributors-section', { heading: emptyBi });
 export const getLocationsSection = () => read<HeadingOnly>('locations-section', { heading: emptyBi });
 export const getContact = () =>
-  read<ContactData>('contact', { heading: emptyBi, intro: emptyBi });
+  read<ContactData>('contact', {
+    heading: emptyBi,
+    intro: emptyBi,
+    successTitle: emptyBi,
+    successBody: emptyBi,
+  });
 export const getFooter = () =>
   read<FooterData>('footer', { formingLine: emptyBi, formedLine: emptyBi, subtitle: emptyBi });
 export const getImprint = () =>

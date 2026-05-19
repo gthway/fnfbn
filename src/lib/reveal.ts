@@ -48,6 +48,12 @@ export function initReveal() {
   }
 
   // ── Single-element reveals ─────────────────────
+  // Behavior:
+  //   - Animate on downward entry from below
+  //   - No reset / reverse while scrolling up (element stays visible)
+  //   - "Arm" again only after element has fully exited the viewport via
+  //     the bottom (user scrolled all the way back above the element).
+  //   - Re-armed element animates fresh on next downward entry. No flash.
   document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
     if (el.dataset.revealInit === 'true') return;
     el.dataset.revealInit = 'true';
@@ -56,19 +62,36 @@ export function initReveal() {
     const delay = parseFloat(el.dataset.revealDelay || '0') || 0;
     const start = el.dataset.revealStart || CONFIG.start;
 
-    gsap.fromTo(el, variant.from, {
-      ...variant.to,
-      duration: CONFIG.duration,
-      ease: CONFIG.ease,
-      delay,
-      overwrite: 'auto',
-      onStart: () => markRevealed(el),
-      scrollTrigger: {
-        trigger: el,
-        start,
-        // restart on every downward entry; nothing happens when scrolling up
-        // toggleActions: onEnter, onLeave, onEnterBack, onLeaveBack
-        toggleActions: 'restart none none none',
+    let armed = true;
+
+    const play = () => {
+      if (!armed) return;
+      armed = false;
+      gsap.fromTo(el, variant.from, {
+        ...variant.to,
+        duration: CONFIG.duration,
+        ease: CONFIG.ease,
+        delay,
+        overwrite: 'auto',
+        onStart: () => markRevealed(el),
+      });
+    };
+
+    // Play trigger
+    ScrollTrigger.create({
+      trigger: el,
+      start,
+      onEnter: play,
+    });
+
+    // Re-arm trigger: fires only when element is fully below viewport again
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top bottom',
+      onLeaveBack: () => {
+        armed = true;
+        gsap.killTweensOf(el);
+        gsap.set(el, variant.from);
       },
     });
   });
@@ -85,16 +108,17 @@ export function initReveal() {
     const stagger = parseFloat(group.dataset.revealStagger || `${CONFIG.stagger}`);
     const start = group.dataset.revealStart || CONFIG.start;
 
-    // Apply initial state inline so the start matches our CSS pre-hide
     gsap.set(children, variant.from);
+    const armed = new Set<HTMLElement>(children);
 
     ScrollTrigger.batch(children, {
       start,
-      // fromTo restarts the animation cleanly on every entry from below;
-      // scrolling up never hides or rewinds visible elements
       onEnter: (els) => {
+        const toPlay = (els as HTMLElement[]).filter((el) => armed.has(el));
+        if (toPlay.length === 0) return;
+        toPlay.forEach((el) => armed.delete(el));
         gsap.fromTo(
-          els,
+          toPlay,
           variant.from,
           {
             ...variant.to,
@@ -103,11 +127,23 @@ export function initReveal() {
             stagger,
             overwrite: 'auto',
             onStart() {
-              els.forEach(markRevealed);
+              toPlay.forEach(markRevealed);
             },
           },
         );
       },
+    });
+
+    children.forEach((child) => {
+      ScrollTrigger.create({
+        trigger: child,
+        start: 'top bottom',
+        onLeaveBack: () => {
+          armed.add(child);
+          gsap.killTweensOf(child);
+          gsap.set(child, variant.from);
+        },
+      });
     });
   });
 }

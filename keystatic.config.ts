@@ -132,6 +132,8 @@ export default config({
       schema: {
         heading: bilingualText('Heading'),
         intro: bilingualText('Intro', true),
+        successTitle: bilingualText('Success title'),
+        successBody: bilingualText('Success body', true),
         recipientEmail: fields.text({
           label: 'Recipient email',
           description: 'Where Netlify Forms forwards the submissions',
