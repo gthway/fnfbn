@@ -23,8 +23,10 @@ const badge = pickLang(data.badge, locale) ?? '';
 
   {badge && (
     <div class="badge-drag" data-badge data-hero="badge">
-      <div class="badge">
-        <span class="badge-text">{badge}</span>
+      <div class="badge-float" data-badge-float>
+        <div class="badge">
+          <span class="badge-text">{badge}</span>
+        </div>
       </div>
     </div>
   )}
@@ -33,6 +35,7 @@ const badge = pickLang(data.badge, locale) ?? '';
 <style>
   .hero {
     position: relative;
+    isolation: isolate;
     min-height: 100svh;
     background: var(--color-hero-bg);
     color: var(--color-fg);
@@ -96,6 +99,14 @@ const badge = pickLang(data.badge, locale) ?? '';
   .badge-drag.is-dragging,
   .badge-drag:active {
     cursor: grabbing;
+  }
+
+  .badge-float {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .badge {
@@ -280,19 +291,85 @@ const badge = pickLang(data.badge, locale) ?? '';
         onPress() {
           badge.classList.add('is-dragging');
           gsap.to(badge, { scale: 1.04, duration: 0.18, ease: 'power2.out' });
+          // Pause idle float so drag transform isn't fighting it
+          const floatTl = (badge as any)._floatTween;
+          if (floatTl) floatTl.pause();
         },
         onRelease() {
           badge.classList.remove('is-dragging');
           gsap.to(badge, { scale: 1, duration: 0.35, ease: 'elastic.out(1, 0.5)' });
+          // Resume idle float after a brief settle
+          const floatTl = (badge as any)._floatTween;
+          if (floatTl) {
+            gsap.delayedCall(0.3, () => floatTl.play());
+          }
         },
       });
     });
   }
 
+  function initBadgeFloat() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const floats = document.querySelectorAll<HTMLElement>('[data-badge-float]');
+    floats.forEach((floatEl) => {
+      if (floatEl.dataset.floatInit === 'true') return;
+      floatEl.dataset.floatInit = 'true';
+
+      const dragEl = floatEl.closest<HTMLElement>('[data-badge]');
+      const state = { paused: false, scheduled: null as gsap.core.Tween | null };
+
+      // Occasional wiggle — every 4–8s a quick playful rotation, then still.
+      // Discrete motion avoids the continuous subpixel re-raster that made the
+      // badge text flicker during a slow sine tween.
+      const playWiggle = () => {
+        const tl = gsap.timeline({
+          onComplete: scheduleNext,
+        });
+        tl.to(floatEl, { rotation: 5, duration: 0.18, ease: 'power2.out' })
+          .to(floatEl, { rotation: -4, duration: 0.22, ease: 'power2.inOut' })
+          .to(floatEl, {
+            rotation: 0,
+            duration: 0.55,
+            ease: 'elastic.out(1, 0.45)',
+          });
+      };
+
+      const scheduleNext = () => {
+        if (state.paused) return;
+        const delay = gsap.utils.random(4, 8);
+        state.scheduled = gsap.delayedCall(delay, () => {
+          if (state.paused) return;
+          playWiggle();
+        });
+      };
+
+      // Hook into drag press/release via the parent's pause/resume flags
+      const handle = {
+        pause() {
+          state.paused = true;
+          if (state.scheduled) state.scheduled.kill();
+          gsap.killTweensOf(floatEl, 'rotation');
+          gsap.to(floatEl, { rotation: 0, duration: 0.2, ease: 'power2.out' });
+        },
+        play() {
+          state.paused = false;
+          scheduleNext();
+        },
+      };
+
+      if (dragEl) (dragEl as any)._floatTween = handle;
+
+      // First wiggle a bit after entrance settles
+      gsap.delayedCall(3.5, scheduleNext);
+    });
+  }
+
   initHeroEntrance();
   initHeroBadgeDrag();
+  initBadgeFloat();
   document.addEventListener('astro:page-load', () => {
     initHeroEntrance();
     initHeroBadgeDrag();
+    initBadgeFloat();
   });
 </script>

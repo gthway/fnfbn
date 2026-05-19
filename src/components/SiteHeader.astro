@@ -272,13 +272,11 @@ const menuMaxLabel =
     padding: calc(var(--header-h) + var(--space-8)) var(--padding-section-h-xs) var(--space-8);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--dur-base) var(--ease-out);
   }
   .mobile-menu[hidden] {
     display: none;
   }
   .mobile-menu.is-open {
-    opacity: 1;
     pointer-events: auto;
   }
   .mobile-menu-list {
@@ -310,6 +308,8 @@ const menuMaxLabel =
 </style>
 
 <script>
+  import { gsap } from '../lib/gsap';
+
   function initMobileMenu() {
     const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
     const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
@@ -320,20 +320,53 @@ const menuMaxLabel =
     const label = toggle.querySelector<HTMLElement>('.nav-toggle-text');
     const openLabel = toggle.dataset.labelOpen ?? 'menu';
     const closeLabel = toggle.dataset.labelClose ?? 'close';
+    const links = Array.from(menu.querySelectorAll<HTMLAnchorElement>('[data-menu-link]'));
+
+    let currentTl: gsap.core.Timeline | null = null;
 
     function setOpen(open: boolean) {
-      menu!.hidden = false;
-      // Force reflow so transition runs from initial state
-      void menu!.offsetWidth;
-      menu!.classList.toggle('is-open', open);
+      // Kill any in-flight transition to avoid stuck states
+      if (currentTl) currentTl.kill();
+
       toggle!.setAttribute('aria-expanded', String(open));
       if (label) label.textContent = open ? closeLabel : openLabel;
       document.documentElement.style.overflow = open ? 'hidden' : '';
-      if (!open) {
-        // Re-hide after transition so [hidden] is honored by screen readers
-        window.setTimeout(() => {
-          if (!menu!.classList.contains('is-open')) menu!.hidden = true;
-        }, 280);
+
+      if (open) {
+        menu!.hidden = false;
+        menu!.classList.add('is-open');
+        gsap.set(menu, { opacity: 0 });
+        gsap.set(links, { opacity: 0, y: 24 });
+        currentTl = gsap.timeline();
+        currentTl
+          .to(menu, { opacity: 1, duration: 0.25, ease: 'power2.out' })
+          .to(
+            links,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.08,
+              ease: 'expo.out',
+            },
+            '-=0.1',
+          );
+      } else {
+        currentTl = gsap.timeline({
+          onComplete() {
+            menu!.classList.remove('is-open');
+            menu!.hidden = true;
+          },
+        });
+        currentTl
+          .to(links, {
+            opacity: 0,
+            y: -12,
+            duration: 0.25,
+            stagger: 0.04,
+            ease: 'power2.in',
+          })
+          .to(menu, { opacity: 0, duration: 0.2, ease: 'power2.in' }, '-=0.1');
       }
     }
 
