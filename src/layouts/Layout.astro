@@ -30,10 +30,13 @@ const { title, description, locale } = Astro.props;
       import { gsap } from '../lib/gsap';
 
       function getHeaderOffset(): number {
-        const root = document.documentElement;
-        const raw = getComputedStyle(root).getPropertyValue('--header-h').trim();
+        const header = document.querySelector<HTMLElement>('.site-header');
+        if (header) return Math.round(header.getBoundingClientRect().height);
+        const raw = getComputedStyle(document.documentElement)
+          .getPropertyValue('--header-h')
+          .trim();
         const parsed = parseInt(raw, 10);
-        return Number.isFinite(parsed) ? parsed : 64;
+        return Number.isFinite(parsed) ? parsed : 62;
       }
 
       function smoothScrollTo(target: Element | string) {
@@ -64,6 +67,12 @@ const { title, description, locale } = Astro.props;
         // (also a document click listener) does not intercept and reload.
         e.preventDefault();
         e.stopImmediatePropagation();
+
+        // Close mobile menu if open (capture-phase stop killed its own listener)
+        const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+        if (toggle && toggle.getAttribute('aria-expanded') === 'true') {
+          toggle.click();
+        }
 
         smoothScrollTo(target);
         history.replaceState(null, '', `#${id}`);
