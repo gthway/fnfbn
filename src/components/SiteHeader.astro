@@ -9,11 +9,19 @@ interface Props {
 const { locale } = Astro.props;
 const labels = t(locale);
 
+// On the homepage anchor links are pure hashes (intercepted for smooth scroll).
+// On other pages prefix with the home path so they navigate back, then the
+// after-swap handler smooth-scrolls to the hash target.
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = path === '/' || path === '/en';
+const homeBase = locale === 'de' ? '/' : '/en/';
+const hashPrefix = isHome ? '' : homeBase;
+
 const navItems = [
-  { href: '#locations', label: labels.nav.locations },
-  { href: '#about', label: labels.nav.about },
-  { href: '#team', label: labels.nav.team },
-  { href: '#contact', label: labels.nav.contact },
+  { href: `${hashPrefix}#locations`, label: labels.nav.locations },
+  { href: `${hashPrefix}#about`, label: labels.nav.about },
+  { href: `${hashPrefix}#team`, label: labels.nav.team },
+  { href: `${hashPrefix}#contact`, label: labels.nav.contact },
 ];
 
 const langs: { code: Locale; label: string }[] = [

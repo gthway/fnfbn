@@ -37,6 +37,12 @@ export interface FooterData {
   subtitle: Bilingual;
 }
 
+export interface LegalPageData {
+  title: string;
+  body: string;
+  lastUpdated?: string;
+}
+
 async function read<T>(name: string, fallback: T): Promise<T> {
   try {
     const raw = await fs.readFile(path.resolve(BASE, `${name}.yaml`), 'utf-8');
@@ -64,3 +70,7 @@ export const getContact = () =>
   read<ContactData>('contact', { heading: emptyBi, intro: emptyBi });
 export const getFooter = () =>
   read<FooterData>('footer', { formingLine: emptyBi, formedLine: emptyBi, subtitle: emptyBi });
+export const getImprint = () =>
+  read<LegalPageData>('imprint', { title: 'Impressum', body: '' });
+export const getPrivacy = () =>
+  read<LegalPageData>('privacy', { title: 'Datenschutz', body: '' });

@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import LegalPage from '../components/LegalPage.astro';
+import { getImprint, getFooter } from '../lib/singletons';
+
+const [imprint, footer] = await Promise.all([getImprint(), getFooter()]);
+---
+
+<Layout title={`${imprint.title} — Forming Nature, Formed by Nature`} locale="de">
+  <SiteHeader locale="de" />
+  <LegalPage data={imprint} />
+  <SiteFooter locale="de" data={footer} />
+</Layout>

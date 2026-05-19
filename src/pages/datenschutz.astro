@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import LegalPage from '../components/LegalPage.astro';
+import { getPrivacy, getFooter } from '../lib/singletons';
+
+const [privacy, footer] = await Promise.all([getPrivacy(), getFooter()]);
+---
+
+<Layout title={`${privacy.title} — Forming Nature, Formed by Nature`} locale="de">
+  <SiteHeader locale="de" />
+  <LegalPage data={privacy} />
+  <SiteFooter locale="de" data={footer} />
+</Layout>

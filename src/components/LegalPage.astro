@@ -1,0 +1,165 @@
+---
+import type { LegalPageData } from '../lib/singletons';
+
+interface Props {
+  data: LegalPageData;
+}
+
+const { data } = Astro.props;
+
+interface Block {
+  heading: string;
+  paragraphs: string[];
+}
+
+function parseBlocks(text: string | undefined): Block[] {
+  if (!text) return [];
+  const lines = text.split('\n');
+  const blocks: { heading: string; body: string }[] = [];
+  let current = { heading: '', body: '' };
+  for (const line of lines) {
+    if (line.startsWith('## ')) {
+      if (current.heading || current.body.trim()) blocks.push(current);
+      current = { heading: line.slice(3).trim(), body: '' };
+    } else {
+      current.body += line + '\n';
+    }
+  }
+  if (current.heading || current.body.trim()) blocks.push(current);
+  return blocks.map((b) => ({
+    heading: b.heading,
+    paragraphs: b.body
+      .split(/\n{2,}/)
+      .map((p) => p.trim())
+      .filter(Boolean),
+  }));
+}
+
+const blocks = parseBlocks(data.body);
+---
+
+<main class="legal">
+  <header class="legal-header">
+    <h1 class="legal-title">{data.title}</h1>
+    {data.lastUpdated && <p class="legal-meta">Stand: {data.lastUpdated}</p>}
+  </header>
+
+  <div class="legal-blocks">
+    {blocks.map((block) => (
+      <article class="legal-block">
+        {block.heading ? (
+          <h2 class="legal-heading">{block.heading}</h2>
+        ) : (
+          <div class="legal-heading-spacer" aria-hidden="true"></div>
+        )}
+        <div class="legal-body">
+          {block.paragraphs.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+      </article>
+    ))}
+  </div>
+</main>
+
+<style>
+  .legal {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    padding:
+      calc(var(--header-h) + clamp(36px, 6vw, 80px))
+      var(--padding-section-h)
+      clamp(64px, 10vw, 128px);
+    min-height: 100svh;
+  }
+
+  .legal-header {
+    max-width: var(--section-max);
+    margin: 0 auto clamp(36px, 5vw, 64px);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: clamp(24px, 3vw, 36px);
+    align-items: end;
+  }
+
+  .legal-title {
+    grid-column: 1 / -1;
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+  }
+
+  .legal-meta {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-inactive);
+  }
+
+  .legal-blocks {
+    max-width: var(--section-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 4vw, 56px);
+  }
+
+  .legal-block {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: clamp(24px, 3vw, 36px);
+    row-gap: clamp(16px, 2vw, 24px);
+    align-items: start;
+  }
+
+  .legal-heading,
+  .legal-heading-spacer {
+    grid-column: 1;
+  }
+
+  .legal-heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(18px, 1.8vw, 24px);
+    line-height: 1.1;
+  }
+
+  .legal-body {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    font-family: var(--font-sans);
+    font-size: clamp(15px, 1.2vw, 18px);
+    line-height: 1.6;
+    max-width: 65ch;
+  }
+
+  .legal-body p {
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  @media (max-width: 768px) {
+    .legal-block {
+      grid-template-columns: 1fr;
+    }
+    .legal-heading,
+    .legal-body {
+      grid-column: 1;
+    }
+    .legal-heading-spacer {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .legal {
+      padding-inline: var(--padding-section-h-xs);
+    }
+  }
+</style>

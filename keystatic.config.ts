@@ -148,5 +148,25 @@ export default config({
         subtitle: bilingualText('Subtitle', true),
       },
     }),
+    imprint: singleton({
+      label: 'Impressum (DE only)',
+      path: 'src/content/_singletons/imprint',
+      format: { data: 'yaml' },
+      schema: {
+        title: fields.text({ label: 'Titel', description: 'Heading' }),
+        body: fields.text({ label: 'Inhalt', multiline: true, description: 'Absätze durch Leerzeile trennen' }),
+        lastUpdated: fields.text({ label: 'Stand (Datum)' }),
+      },
+    }),
+    privacy: singleton({
+      label: 'Datenschutz (DE only)',
+      path: 'src/content/_singletons/privacy',
+      format: { data: 'yaml' },
+      schema: {
+        title: fields.text({ label: 'Titel' }),
+        body: fields.text({ label: 'Inhalt', multiline: true, description: 'Absätze durch Leerzeile trennen' }),
+        lastUpdated: fields.text({ label: 'Stand (Datum)' }),
+      },
+    }),
   },
 });
