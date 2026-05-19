@@ -66,7 +66,9 @@ export function initReveal() {
       scrollTrigger: {
         trigger: el,
         start,
-        once: true,
+        // Play when entering from below, reset (no anim) when leaving back above viewport
+        // toggleActions: onEnter, onLeave, onEnterBack, onLeaveBack
+        toggleActions: 'play none none reset',
       },
     });
   });
@@ -88,7 +90,6 @@ export function initReveal() {
 
     ScrollTrigger.batch(children, {
       start,
-      once: true,
       onEnter: (els) => {
         gsap.to(els, {
           ...variant.to,
@@ -100,6 +101,12 @@ export function initReveal() {
             els.forEach(markRevealed);
           },
         });
+      },
+      // Reset back to initial state when scrolled above viewport,
+      // ready to re-play on next entry from below
+      onLeaveBack: (els) => {
+        gsap.killTweensOf(els);
+        gsap.set(els, variant.from);
       },
     });
   });

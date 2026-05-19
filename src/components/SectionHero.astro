@@ -84,7 +84,7 @@ const badge = pickLang(data.badge, locale) ?? '';
   .badge-drag {
     --badge-size: clamp(130px, 18vw, 250px);
     position: absolute;
-    top: clamp(40px, 8vw, 120px);
+    top: calc(var(--header-h) + clamp(8px, 4vw, 60px));
     right: clamp(24px, 6vw, 120px);
     width: var(--badge-size);
     height: var(--badge-size);

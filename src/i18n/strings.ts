@@ -23,9 +23,9 @@ export const ui = {
     contributors: {
       visitWebsite: 'Webseite besuchen',
       roles: {
-        organizer: 'Organisation',
-        artist: 'Künstler:in',
-        scientist: 'Wissenschaft',
+        organizer: 'Organisator*in',
+        artist: 'Künstler*in',
+        scientist: 'Wissenschaftler*in',
       },
     },
     skipToContent: 'Zum Inhalt springen',
