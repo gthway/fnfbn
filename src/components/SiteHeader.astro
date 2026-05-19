@@ -1,0 +1,371 @@
+---
+import type { Locale } from '../i18n/strings';
+import { t, localePath } from '../i18n/strings';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const labels = t(locale);
+
+const navItems = [
+  { href: '#locations', label: labels.nav.locations },
+  { href: '#about', label: labels.nav.about },
+  { href: '#team', label: labels.nav.team },
+  { href: '#contact', label: labels.nav.contact },
+];
+
+const langs: { code: Locale; label: string }[] = [
+  { code: 'en', label: 'en' },
+  { code: 'de', label: 'de' },
+];
+
+const menuMaxLabel =
+  labels.nav.menuOpen.length >= labels.nav.menuClose.length
+    ? labels.nav.menuOpen
+    : labels.nav.menuClose;
+---
+
+<header class="site-header">
+  <nav class="nav nav-desktop" aria-label="Main">
+    <ul class="nav-list">
+      {navItems.map((item) => (
+        <li>
+          <a href={item.href}>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <button
+    class="nav-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="mobile-menu"
+    data-menu-toggle
+    data-label-open={labels.nav.menuOpen}
+    data-label-close={labels.nav.menuClose}
+  >
+    <span class="nav-toggle-spacer" aria-hidden="true">{menuMaxLabel}</span>
+    <span class="nav-toggle-text">{labels.nav.menuOpen}</span>
+  </button>
+
+  <div class="lang" aria-label="Language">
+    {langs.map((l) => (
+      <a
+        href={localePath(l.code, '/')}
+        class:list={['lang-link', { 'is-active': l.code === locale }]}
+        hreflang={l.code}
+        aria-current={l.code === locale ? 'true' : undefined}
+        data-label={l.label}
+      >
+        <span class="lang-text">{l.label}</span>
+      </a>
+    ))}
+  </div>
+</header>
+
+<div id="mobile-menu" class="mobile-menu" data-mobile-menu hidden>
+  <nav class="mobile-menu-nav" aria-label="Mobile main">
+    <ul class="mobile-menu-list">
+      {navItems.map((item) => (
+        <li>
+          <a href={item.href} class="mobile-menu-link" data-menu-link>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding: var(--padding-header-v) var(--padding-section-h);
+    background: var(--color-header-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--nav-fs);
+    line-height: 1;
+  }
+
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-5);
+  }
+
+  .nav-list a,
+  .lang-link {
+    color: inherit;
+    text-decoration: none;
+    line-height: 1;
+    padding: 2px 0;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+
+  /* Dim peers when any nav item is hovered */
+  .nav-list:hover a {
+    color: var(--color-inactive);
+  }
+  .nav-list a:hover {
+    color: var(--color-fg);
+  }
+
+  .nav-list a {
+    position: relative;
+  }
+  .nav-list a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .nav-list a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .lang {
+    display: flex;
+    gap: var(--space-5);
+  }
+
+  .lang-link {
+    position: relative;
+    display: inline-grid;
+    color: var(--color-inactive);
+    font-weight: 400;
+  }
+  .lang-link::before {
+    content: attr(data-label);
+    grid-area: 1 / 1;
+    font-weight: 700;
+    visibility: hidden;
+  }
+  .lang-text {
+    grid-area: 1 / 1;
+  }
+  .lang-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .lang-link:hover {
+    color: var(--color-fg);
+  }
+  .lang-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .lang-link.is-active {
+    color: var(--color-fg);
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .lang-link.is-active::after {
+    display: none;
+  }
+
+  /* ── Mobile menu toggle ─────────────────────── */
+  .nav-toggle {
+    display: none;
+    position: relative;
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  /* Reserve width of longer label so toggle never reflows */
+  .nav-toggle-spacer {
+    display: inline-block;
+    visibility: hidden;
+  }
+  .nav-toggle-text {
+    position: absolute;
+    inset: 2px 0 auto 0;
+    text-align: left;
+  }
+  .nav-toggle::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .nav-toggle:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* ── Mobile breakpoint ──────────────────────── */
+  @media (max-width: 640px) {
+    .site-header {
+      padding-inline: var(--padding-section-h-xs);
+    }
+    .nav-desktop {
+      display: none;
+    }
+    .nav-toggle {
+      display: inline-block;
+    }
+  }
+
+  /* ── Full-screen mobile menu overlay ────────── */
+  .mobile-menu {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-header-bg);
+    color: var(--color-fg);
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--padding-section-h-xs);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .mobile-menu[hidden] {
+    display: none;
+  }
+  .mobile-menu.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mobile-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    text-align: center;
+  }
+  .mobile-menu-link {
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 11vw, 72px);
+    line-height: 1;
+    display: inline-block;
+    padding: 4px 0;
+  }
+
+  /* Desktop hard-hide — even if JS state leaked open on resize */
+  @media (min-width: 641px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  function initMobileMenu() {
+    const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+    if (!toggle || !menu) return;
+    if (toggle.dataset.menuInit === 'true') return;
+    toggle.dataset.menuInit = 'true';
+
+    const label = toggle.querySelector<HTMLElement>('.nav-toggle-text');
+    const openLabel = toggle.dataset.labelOpen ?? 'menu';
+    const closeLabel = toggle.dataset.labelClose ?? 'close';
+
+    function setOpen(open: boolean) {
+      menu!.hidden = false;
+      // Force reflow so transition runs from initial state
+      void menu!.offsetWidth;
+      menu!.classList.toggle('is-open', open);
+      toggle!.setAttribute('aria-expanded', String(open));
+      if (label) label.textContent = open ? closeLabel : openLabel;
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (!open) {
+        // Re-hide after transition so [hidden] is honored by screen readers
+        window.setTimeout(() => {
+          if (!menu!.classList.contains('is-open')) menu!.hidden = true;
+        }, 280);
+      }
+    }
+
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      setOpen(open);
+    });
+
+    // Close on any menu link click — anchor smooth scroll handles the rest
+    menu.querySelectorAll<HTMLAnchorElement>('[data-menu-link]').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+      }
+    });
+
+    // Auto-close + cleanup if viewport grows past mobile breakpoint
+    const mq = window.matchMedia('(min-width: 641px)');
+    const handleViewport = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+      }
+    };
+    handleViewport(mq);
+    mq.addEventListener('change', handleViewport);
+  }
+
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
+
+  // Preserve scroll position across language switches
+  function bindLangScrollSave() {
+    document.querySelectorAll<HTMLAnchorElement>('.lang-link').forEach((link) => {
+      if (link.dataset.scrollBound === 'true') return;
+      link.dataset.scrollBound = 'true';
+      link.addEventListener('click', () => {
+        if (link.classList.contains('is-active')) return;
+        sessionStorage.setItem('fnfbn:lang-scroll', String(window.scrollY));
+      });
+    });
+  }
+  bindLangScrollSave();
+  document.addEventListener('astro:page-load', bindLangScrollSave);
+</script>

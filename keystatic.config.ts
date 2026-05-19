@@ -44,14 +44,12 @@ export default config({
       schema: {
         slug: fields.slug({ name: { label: 'Slug' } }),
         title: bilingualText('Title'),
-        address: bilingualText('Address', true),
-        dates: bilingualText('Dates / Schedule', true),
-        image: fields.image({
-          label: 'Image',
-          directory: 'public/uploads/locations',
-          publicPath: '/uploads/locations/',
+        date: bilingualText('Date', false),
+        time: bilingualText('Time', false),
+        routeUrl: fields.url({
+          label: 'Route URL',
+          description: 'Link to Google Maps / Apple Maps directions',
         }),
-        link: fields.url({ label: 'External link', description: 'Optional' }),
         order: fields.integer({ label: 'Order', defaultValue: 0 }),
       },
     }),
@@ -63,13 +61,20 @@ export default config({
       schema: {
         slug: fields.slug({ name: { label: 'Slug' } }),
         name: fields.text({ label: 'Name' }),
-        role: bilingualText('Role'),
+        roles: fields.multiselect({
+          label: 'Roles',
+          options: [
+            { label: 'Organizer', value: 'organizer' },
+            { label: 'Artist', value: 'artist' },
+            { label: 'Scientist', value: 'scientist' },
+          ],
+        }),
         photo: fields.image({
           label: 'Photo',
           directory: 'public/uploads/contributors',
           publicPath: '/uploads/contributors/',
         }),
-        link: fields.url({ label: 'External link' }),
+        link: fields.url({ label: 'External link', description: 'Optional — adds "Visit Website" CTA' }),
         order: fields.integer({ label: 'Order', defaultValue: 0 }),
       },
     }),
@@ -80,10 +85,10 @@ export default config({
       path: 'src/content/_singletons/hero',
       format: { data: 'yaml' },
       schema: {
-        formingLine: bilingualText('Top line (Forming Nature)'),
-        formedLine: bilingualText('Bottom line (Formed by Nature)'),
-        subtitle: bilingualText('Subtitle'),
-        badge: bilingualText('Badge text'),
+        formingLine: bilingualText('Top line (Forming Nature)', true),
+        formedLine: bilingualText('Bottom line (Formed by Nature)', true),
+        subtitle: bilingualText('Subtitle', true),
+        badge: bilingualText('Badge text', true),
       },
     }),
     about: singleton({
@@ -138,9 +143,9 @@ export default config({
       path: 'src/content/_singletons/footer',
       format: { data: 'yaml' },
       schema: {
-        formingLine: bilingualText('Top line'),
-        formedLine: bilingualText('Bottom line'),
-        subtitle: bilingualText('Subtitle'),
+        formingLine: bilingualText('Top line', true),
+        formedLine: bilingualText('Bottom line', true),
+        subtitle: bilingualText('Subtitle', true),
       },
     }),
   },

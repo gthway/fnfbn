@@ -1,0 +1,81 @@
+---
+import type { Locale } from '../i18n/strings';
+import type { FooterData } from '../lib/singletons';
+import { pickLang } from '../i18n/strings';
+
+interface Props {
+  locale: Locale;
+  data: FooterData;
+}
+
+const { locale, data } = Astro.props;
+const forming = pickLang(data.formingLine, locale) ?? '';
+const formed = pickLang(data.formedLine, locale) ?? '';
+const subtitle = pickLang(data.subtitle, locale) ?? '';
+---
+
+<footer class="footer">
+  <p class="f-forming">{forming}</p>
+  <p class="f-subtitle">{subtitle}</p>
+  <p class="f-formed">{formed}</p>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-footer-bg);
+    color: var(--color-footer-fg);
+    padding: 24px var(--padding-section-h) 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: clamp(16px, 2vw, 32px);
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .f-forming,
+  .f-formed {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 7vw, 72px);
+    line-height: 1;
+    white-space: pre-line;
+  }
+
+  .f-forming {
+    align-self: start;
+    text-align: left;
+  }
+
+  .f-formed {
+    align-self: end;
+    text-align: right;
+  }
+
+  .f-subtitle {
+    margin: 0;
+    align-self: center;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(18px, 1.8vw, 24px);
+    line-height: 1.2;
+    white-space: pre-line;
+  }
+
+  @media (max-width: 1024px) {
+    .footer {
+      grid-template-columns: 1fr;
+      row-gap: 36px;
+    }
+    .f-forming { text-align: left; align-self: stretch; }
+    .f-subtitle { text-align: center; align-self: stretch; }
+    .f-formed { text-align: right; align-self: stretch; }
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding: 24px var(--padding-section-h-xs) 64px;
+    }
+  }
+</style>

@@ -1,0 +1,207 @@
+---
+import type { Locale } from '../i18n/strings';
+import type { HeroData } from '../lib/singletons';
+import { pickLang } from '../i18n/strings';
+
+interface Props {
+  locale: Locale;
+  data: HeroData;
+}
+
+const { locale, data } = Astro.props;
+
+const formingLine = pickLang(data.formingLine, locale) ?? '';
+const formedLine = pickLang(data.formedLine, locale) ?? '';
+const subtitle = pickLang(data.subtitle, locale) ?? '';
+const badge = pickLang(data.badge, locale) ?? '';
+---
+
+<section class="hero" id="top">
+  <h1 class="hero-top">{formingLine}</h1>
+  <p class="hero-subtitle">{subtitle}</p>
+  <p class="hero-bottom">{formedLine}</p>
+
+  {badge && (
+    <div class="badge-drag" data-badge>
+      <div class="badge">
+        <span class="badge-text">{badge}</span>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    background: var(--color-hero-bg);
+    color: var(--color-fg);
+    padding:
+      calc(var(--header-h) + clamp(24px, 6vw, 102px))
+      var(--padding-section-h)
+      clamp(36px, 8vw, 124px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(48px, 8vw, 96px);
+    overflow: hidden;
+    font-family: var(--font-display);
+    touch-action: pan-y;
+  }
+
+  .hero-top,
+  .hero-bottom {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 9vw, 120px);
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre-line;
+  }
+
+  .hero-top {
+    align-self: flex-start;
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    align-self: center;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1.2;
+    white-space: pre-line;
+    max-width: 36ch;
+  }
+
+  .hero-bottom {
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  /* ── Badge ─────────────────────────────────── */
+  .badge-drag {
+    --badge-size: clamp(130px, 18vw, 250px);
+    position: absolute;
+    top: clamp(40px, 8vw, 120px);
+    right: clamp(24px, 6vw, 120px);
+    width: var(--badge-size);
+    height: var(--badge-size);
+    cursor: grab;
+    touch-action: none;
+    z-index: 5;
+    will-change: transform;
+  }
+  .badge-drag.is-dragging,
+  .badge-drag:active {
+    cursor: grabbing;
+  }
+
+  .badge {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-badge-bg);
+    transform: rotate(15deg);
+    display: grid;
+    place-content: center;
+    padding: 12%;
+    text-align: center;
+    box-shadow:
+      0 2px 2px rgba(0, 0, 0, 0.15),
+      4px 6px 16px rgba(0, 0, 0, 0.05),
+      inset -4px -4px 12px var(--color-badge-shadow-inner-dark),
+      inset 1px 1px 5px rgba(255, 255, 255, 0.8),
+      inset 4px 4px 16px var(--color-badge-shadow-inner-light);
+    pointer-events: none;
+  }
+
+  /* Font scales proportional to badge size so wrap stays identical */
+  .badge-text {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: calc(var(--badge-size) * 0.11);
+    line-height: 1.15;
+    color: var(--color-fg);
+    white-space: pre-line;
+  }
+
+  /* ── Desktop layout — top / (subtitle left, formed right) ─── */
+  @media (min-width: 768px) {
+    .hero {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        'top top'
+        '.   .'
+        'sub bot';
+      column-gap: clamp(16px, 2vw, 32px);
+      align-items: end;
+    }
+    .hero-top {
+      grid-area: top;
+      align-self: start;
+    }
+    .hero-subtitle {
+      grid-area: sub;
+      align-self: end;
+      justify-self: start;
+      text-align: left;
+    }
+    .hero-bottom {
+      grid-area: bot;
+      align-self: end;
+      justify-self: end;
+      text-align: right;
+    }
+  }
+
+  /* ── Mobile padding refinement ──────────────── */
+  @media (max-width: 640px) {
+    .hero {
+      padding:
+        calc(var(--header-h) + 24px)
+        var(--padding-section-h-xs)
+        36px;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, Draggable } from '../lib/gsap';
+
+  function initHeroBadgeDrag() {
+    const badges = document.querySelectorAll<HTMLElement>('[data-badge]');
+    badges.forEach((badge) => {
+      const hero = badge.closest<HTMLElement>('.hero');
+      if (!hero) return;
+
+      // Avoid double-init on view transitions
+      if (badge.dataset.dragInit === 'true') return;
+      badge.dataset.dragInit = 'true';
+
+      Draggable.create(badge, {
+        type: 'x,y',
+        bounds: hero,
+        inertia: true,
+        edgeResistance: 0.65,
+        dragResistance: 0.05,
+        throwResistance: 1200,
+        onPress() {
+          badge.classList.add('is-dragging');
+          gsap.to(badge, { scale: 1.04, duration: 0.18, ease: 'power2.out' });
+        },
+        onRelease() {
+          badge.classList.remove('is-dragging');
+          gsap.to(badge, { scale: 1, duration: 0.35, ease: 'elastic.out(1, 0.5)' });
+        },
+      });
+    });
+  }
+
+  initHeroBadgeDrag();
+  document.addEventListener('astro:page-load', initHeroBadgeDrag);
+</script>

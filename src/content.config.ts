@@ -7,10 +7,9 @@ const locations = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: 'src/content/locations' }),
   schema: z.object({
     title: bilingual,
-    address: bilingual,
-    dates: bilingual,
-    image: z.string().optional(),
-    link: z.string().optional(),
+    date: bilingual,
+    time: bilingual,
+    routeUrl: z.string().optional(),
     order: z.number().default(0),
   }),
 });
@@ -19,7 +18,7 @@ const contributors = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: 'src/content/contributors' }),
   schema: z.object({
     name: z.string(),
-    role: bilingual,
+    roles: z.array(z.enum(['organizer', 'artist', 'scientist'])).default([]),
     photo: z.string().optional(),
     link: z.string().optional(),
     order: z.number().default(0),

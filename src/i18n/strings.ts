@@ -9,11 +9,24 @@ export const ui = {
       about: 'Über',
       team: 'Team',
       contact: 'Kontakt',
+      menuOpen: 'menü',
+      menuClose: 'schließen',
     },
     contact: {
       message: 'Nachricht',
       email: 'E-Mail-Adresse',
       send: 'Nachricht senden',
+    },
+    locations: {
+      routeTo: 'Route zur Location',
+    },
+    contributors: {
+      visitWebsite: 'Webseite besuchen',
+      roles: {
+        organizer: 'Organisation',
+        artist: 'Künstler:in',
+        scientist: 'Wissenschaft',
+      },
     },
     skipToContent: 'Zum Inhalt springen',
   },
@@ -23,11 +36,24 @@ export const ui = {
       about: 'About',
       team: 'Team',
       contact: 'Contact',
+      menuOpen: 'menu',
+      menuClose: 'close',
     },
     contact: {
       message: 'Message',
       email: 'E-mail address',
       send: 'Send message',
+    },
+    locations: {
+      routeTo: 'Route to location',
+    },
+    contributors: {
+      visitWebsite: 'Visit website',
+      roles: {
+        organizer: 'Organizer',
+        artist: 'Artist',
+        scientist: 'Scientist',
+      },
     },
     skipToContent: 'Skip to content',
   },

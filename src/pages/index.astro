@@ -1,13 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SectionHero from '../components/SectionHero.astro';
+import SectionLocations from '../components/SectionLocations.astro';
+import SectionTexts from '../components/SectionTexts.astro';
+import SectionContributors from '../components/SectionContributors.astro';
+import SectionContact from '../components/SectionContact.astro';
+import { getHero, getAbout, getTeamIntro, getContact, getFooter } from '../lib/singletons';
+
+const [hero, about, teamIntro, contact, footer] = await Promise.all([
+  getHero(),
+  getAbout(),
+  getTeamIntro(),
+  getContact(),
+  getFooter(),
+]);
 ---
 
 <Layout title="Forming Nature, Formed by Nature" locale="de">
-  <main style="padding: 64px var(--padding-section-h);">
-    <h1 style="font-size: var(--fs-display); font-family: var(--font-display);">
-      fnfbn — DE
-    </h1>
-    <p>Setup OK. Sprache: Deutsch (Default).</p>
-    <p><a href="/en">→ English</a></p>
+  <SiteHeader locale="de" />
+  <main>
+    <SectionHero locale="de" data={hero} />
+    <SectionLocations locale="de" />
+    <SectionTexts
+      locale="de"
+      blocks={[
+        { id: 'about', data: about },
+        { id: 'team', data: teamIntro },
+      ]}
+    />
+    <SectionContributors locale="de" />
+    <SectionContact locale="de" data={contact} />
   </main>
+  <SiteFooter locale="de" data={footer} />
 </Layout>

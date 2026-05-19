@@ -1,15 +1,33 @@
 /* ── Design tokens ─────────────────────────── */
 :root {
-  /* Colors — placeholder, adjust to Figma */
+  /* Colors */
   --color-bg: #faf7f2;
-  --color-fg: #111111;
+  --color-fg: #000000;
+  --color-inactive: #747474;
   --color-muted: color-mix(in oklab, var(--color-fg) 50%, transparent);
   --color-accent: #1f4d2b;
+  --color-header-bg: #cab7ff;
+  --color-hero-bg: #cab7ff;
+  --color-badge-bg: #51e4f7;
+  --color-badge-shadow-inner-dark: #35b7c8;
+  --color-badge-shadow-inner-light: #a8f5ff;
+  --color-locations-bg: #f7f9ff;
+  --color-contributors-bg: #f7f9ff;
+  --color-card-bg: #cab7ff;
+  --color-card-cta-bg: #b1ffc9;
+  --color-tag-bg: #f7f9ff;
+  --color-photo-placeholder: #f7f9ff;
+  --color-texts-bg: #cab7ff;
+  --color-contact-bg: #cab7ff;
+  --color-input-bg: #f6fff3;
+  --color-button-bg: #b1ffc9;
+  --color-footer-bg: #000000;
+  --color-footer-fg: #b1ffc9;
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
-  --font-display: var(--font-serif);
+  --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Faculty Glyphic', 'Geist', system-ui, -apple-system, sans-serif;
+  --nav-fs: 20px;
 
   /* Fluid sizes */
   --fs-body: clamp(15px, 1vw + 0.6rem, 18px);
@@ -30,8 +48,9 @@
   --space-16: 128px;
 
   /* Layout */
-  --padding-section-h: clamp(20px, 4vw, 64px);
-  --padding-section-h-xs: 16px;
+  --padding-section-h: clamp(24px, 4vw, 64px);
+  --padding-section-h-xs: 24px;
+  --padding-header-v: 16px;
   --padding-section-v: clamp(48px, 6vw, 96px);
   --section-max: 1440px;
   --measure-body: 64ch;

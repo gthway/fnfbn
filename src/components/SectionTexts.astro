@@ -1,0 +1,107 @@
+---
+import type { Locale } from '../i18n/strings';
+import type { SectionTextData } from '../lib/singletons';
+import { pickLang } from '../i18n/strings';
+
+interface Block {
+  id?: string;
+  data: SectionTextData;
+}
+
+interface Props {
+  locale: Locale;
+  blocks: Block[];
+}
+
+const { locale, blocks } = Astro.props;
+
+function splitParagraphs(text: string | undefined): string[] {
+  if (!text) return [];
+  return text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+---
+
+<section class="texts">
+  {blocks.map((block) => {
+    const heading = pickLang(block.data.heading, locale) ?? '';
+    const body = pickLang(block.data.body, locale);
+    const paragraphs = splitParagraphs(body);
+    return (
+      <article class="text-block" id={block.id}>
+        <h3 class="text-heading">{heading}</h3>
+        <div class="text-body">
+          {paragraphs.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+      </article>
+    );
+  })}
+</section>
+
+<style>
+  .texts {
+    background: var(--color-texts-bg);
+    color: var(--color-fg);
+    padding:
+      clamp(48px, 8vw, 96px)
+      var(--padding-section-h);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(48px, 6vw, 64px);
+  }
+
+  .text-block {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: clamp(24px, 3vw, 36px);
+    row-gap: clamp(24px, 3vw, 36px);
+    align-items: start;
+  }
+
+  .text-heading {
+    margin: 0;
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(18px, 1.8vw, 24px);
+    line-height: 1.1;
+  }
+
+  .text-body {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: clamp(18px, 1.8vw, 24px);
+    line-height: 1.5;
+    max-width: var(--measure-body);
+  }
+  .text-body p {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .text-block {
+      grid-template-columns: 1fr;
+    }
+    .text-heading,
+    .text-body {
+      grid-column: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .texts {
+      padding:
+        clamp(48px, 12vw, 64px)
+        var(--padding-section-h-xs);
+      gap: clamp(48px, 14vw, 64px);
+    }
+  }
+</style>

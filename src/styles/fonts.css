@@ -1,0 +1,21 @@
+/* ── Self-hosted fonts ──────────────────────
+   Files in /public/fonts/, served from our own origin.
+   No Google CDN, no third-party tracking.
+   ───────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/Geist-Variable.ttf') format('truetype-variations'),
+       url('/fonts/Geist-Variable.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Faculty Glyphic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/FacultyGlyphic-Regular.ttf') format('truetype');
+}
