@@ -17,12 +17,12 @@ const badge = pickLang(data.badge, locale) ?? '';
 ---
 
 <section class="hero" id="top">
-  <h1 class="hero-top">{formingLine}</h1>
-  <p class="hero-subtitle">{subtitle}</p>
-  <p class="hero-bottom">{formedLine}</p>
+  <h1 class="hero-top" data-hero="top">{formingLine}</h1>
+  <p class="hero-subtitle" data-hero="sub">{subtitle}</p>
+  <p class="hero-bottom" data-hero="bottom">{formedLine}</p>
 
   {badge && (
-    <div class="badge-drag" data-badge>
+    <div class="badge-drag" data-badge data-hero="badge">
       <div class="badge">
         <span class="badge-text">{badge}</span>
       </div>
@@ -167,10 +167,98 @@ const badge = pickLang(data.badge, locale) ?? '';
         36px;
     }
   }
+
+  /* ── Hero entrance pre-hide (FOUC-safe) ───── */
+  [data-hero]:not([data-hero-revealed]) {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  [data-hero='top']:not([data-hero-revealed]),
+  [data-hero='sub']:not([data-hero-revealed]),
+  [data-hero='bottom']:not([data-hero-revealed]) {
+    transform: translate3d(0, 12px, 0);
+  }
+  [data-hero='badge']:not([data-hero-revealed]) {
+    /* preserve drag wrapper's no-rotation; child .badge keeps its rotate */
+    transform: scale(0.92);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-hero] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
 </style>
 
 <script>
   import { gsap, Draggable } from '../lib/gsap';
+
+  function initHeroEntrance() {
+    const hero = document.querySelector<HTMLElement>('.hero');
+    if (!hero) return;
+    if (hero.dataset.entranceInit === 'true') return;
+    hero.dataset.entranceInit = 'true';
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      hero.querySelectorAll<HTMLElement>('[data-hero]').forEach((el) => {
+        el.setAttribute('data-hero-revealed', '');
+      });
+      return;
+    }
+
+    const top = hero.querySelector<HTMLElement>('[data-hero="top"]');
+    const sub = hero.querySelector<HTMLElement>('[data-hero="sub"]');
+    const bot = hero.querySelector<HTMLElement>('[data-hero="bottom"]');
+    const badge = hero.querySelector<HTMLElement>('[data-hero="badge"]');
+
+    const markRevealed = (el: HTMLElement | null) => {
+      if (el) el.setAttribute('data-hero-revealed', '');
+    };
+
+    const tl = gsap.timeline({
+      defaults: { duration: 1.4, ease: 'expo.out' },
+    });
+
+    if (top) {
+      tl.fromTo(
+        top,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, onStart: () => markRevealed(top) },
+        0,
+      );
+    }
+    if (bot) {
+      tl.fromTo(
+        bot,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, onStart: () => markRevealed(bot) },
+        0.55,
+      );
+    }
+    if (sub) {
+      tl.fromTo(
+        sub,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, onStart: () => markRevealed(sub) },
+        1.1,
+      );
+    }
+    if (badge) {
+      tl.fromTo(
+        badge,
+        { opacity: 0, scale: 0.92 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 1.5,
+          ease: 'expo.out',
+          onStart: () => markRevealed(badge),
+        },
+        1.65,
+      );
+    }
+  }
 
   function initHeroBadgeDrag() {
     const badges = document.querySelectorAll<HTMLElement>('[data-badge]');
@@ -201,6 +289,10 @@ const badge = pickLang(data.badge, locale) ?? '';
     });
   }
 
+  initHeroEntrance();
   initHeroBadgeDrag();
-  document.addEventListener('astro:page-load', initHeroBadgeDrag);
+  document.addEventListener('astro:page-load', () => {
+    initHeroEntrance();
+    initHeroBadgeDrag();
+  });
 </script>

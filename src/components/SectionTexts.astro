@@ -31,8 +31,8 @@ function splitParagraphs(text: string | undefined): string[] {
     const paragraphs = splitParagraphs(body);
     return (
       <article class="text-block" id={block.id}>
-        <h3 class="text-heading">{heading}</h3>
-        <div class="text-body">
+        <h3 class="text-heading" data-reveal>{heading}</h3>
+        <div class="text-body" data-reveal data-reveal-delay="0.1">
           {paragraphs.map((p) => (
             <p>{p}</p>
           ))}

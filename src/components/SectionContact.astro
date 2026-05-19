@@ -16,8 +16,8 @@ const labels = t(locale);
 
 <section id="contact" class="contact">
   <div class="contact-intro">
-    <h2 class="contact-heading">{heading}</h2>
-    <p class="contact-text">{intro}</p>
+    <h2 class="contact-heading" data-reveal>{heading}</h2>
+    <p class="contact-text" data-reveal data-reveal-delay="0.1">{intro}</p>
   </div>
 
   <div class="contact-form-wrap">
@@ -34,17 +34,19 @@ const labels = t(locale);
         <label>Bot? <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
       </p>
 
-      <div class="field">
-        <textarea id="contact-message" name="message" rows={6} required></textarea>
-        <label for="contact-message" class="field-label">{labels.contact.message}</label>
-      </div>
+      <div class="form-fields" data-reveal-group>
+        <div class="field">
+          <textarea id="contact-message" name="message" rows={6} required></textarea>
+          <label for="contact-message" class="field-label">{labels.contact.message}</label>
+        </div>
 
-      <div class="field">
-        <input id="contact-email" name="email" type="email" autocomplete="email" required />
-        <label for="contact-email" class="field-label">{labels.contact.email}</label>
-      </div>
+        <div class="field">
+          <input id="contact-email" name="email" type="email" autocomplete="email" required />
+          <label for="contact-email" class="field-label">{labels.contact.email}</label>
+        </div>
 
-      <button type="submit" class="submit">{labels.contact.send}</button>
+        <button type="submit" class="submit">{labels.contact.send}</button>
+      </div>
     </form>
   </div>
 </section>
@@ -90,6 +92,12 @@ const labels = t(locale);
   }
 
   .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .form-fields {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);

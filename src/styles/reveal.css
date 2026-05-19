@@ -1,0 +1,41 @@
+/* ── Reveal initial states ─────────────────
+   Applied pre-paint via CSS so there is no FOUC.
+   Once GSAP starts the animation it adds `data-revealed`
+   which deactivates these rules.
+   ───────────────────────────────────────── */
+
+[data-reveal]:not([data-revealed]) {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  will-change: opacity, transform;
+}
+
+[data-reveal='fade']:not([data-revealed]) {
+  transform: none;
+}
+
+[data-reveal='from-left']:not([data-revealed]) {
+  transform: translate3d(-32px, 0, 0);
+}
+
+[data-reveal='from-right']:not([data-revealed]) {
+  transform: translate3d(32px, 0, 0);
+}
+
+[data-reveal='scale']:not([data-revealed]) {
+  transform: scale(0.95);
+}
+
+[data-reveal-group] > *:not([data-revealed]) {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal-group] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

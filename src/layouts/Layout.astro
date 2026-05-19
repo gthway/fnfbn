@@ -28,6 +28,7 @@ const { title, description, locale } = Astro.props;
 
     <script>
       import { gsap } from '../lib/gsap';
+      import { initReveal } from '../lib/reveal';
 
       function getHeaderOffset(): number {
         const header = document.querySelector<HTMLElement>('.site-header');
@@ -93,6 +94,10 @@ const { title, description, locale } = Astro.props;
 
       bind();
       document.addEventListener('astro:page-load', bind);
+
+      // Scroll-reveal init (re-runs after View Transitions)
+      initReveal();
+      document.addEventListener('astro:page-load', initReveal);
 
       // Restore scroll position after language switch
       document.addEventListener('astro:after-swap', () => {

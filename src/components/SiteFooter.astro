@@ -15,9 +15,9 @@ const subtitle = pickLang(data.subtitle, locale) ?? '';
 ---
 
 <footer class="footer">
-  <p class="f-forming">{forming}</p>
-  <p class="f-subtitle">{subtitle}</p>
-  <p class="f-formed">{formed}</p>
+  <p class="f-forming" data-reveal="from-left" data-reveal-start="top bottom">{forming}</p>
+  <p class="f-subtitle" data-reveal data-reveal-start="top bottom">{subtitle}</p>
+  <p class="f-formed" data-reveal="from-right" data-reveal-start="top bottom">{formed}</p>
 </footer>
 
 <style>

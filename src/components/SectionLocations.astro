@@ -22,11 +22,11 @@ const items = all
 <section id="locations" class="locations">
   <div class="wrapper-outer">
     <header class="locations-heading">
-      <h2>{heading}</h2>
+      <h2 data-reveal>{heading}</h2>
     </header>
 
     {items.length > 0 && (
-      <ul class="cards">
+      <ul class="cards" data-reveal-group>
         {items.map((item) => {
           const title = pickLang(item.title, locale) ?? '';
           const date = pickLang(item.date, locale) ?? '';
