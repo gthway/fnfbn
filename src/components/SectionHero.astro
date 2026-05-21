@@ -364,12 +364,24 @@ const badge = pickLang(data.badge, locale) ?? '';
     });
   }
 
-  initHeroEntrance();
-  initHeroBadgeDrag();
-  initBadgeFloat();
-  document.addEventListener('astro:page-load', () => {
-    initHeroEntrance();
-    initHeroBadgeDrag();
-    initBadgeFloat();
-  });
+  // Gate hero reveal on font load to avoid glyph-swap mid-fade.
+  // Race against a 1500ms timeout so a stalled font CDN never blocks the reveal.
+  function fontsReady(): Promise<void> {
+    if (!('fonts' in document)) return Promise.resolve();
+    return Promise.race([
+      document.fonts.ready.then(() => undefined),
+      new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+    ]);
+  }
+
+  function startHero() {
+    fontsReady().then(() => {
+      initHeroEntrance();
+      initHeroBadgeDrag();
+      initBadgeFloat();
+    });
+  }
+
+  startHero();
+  document.addEventListener('astro:page-load', startHero);
 </script>
