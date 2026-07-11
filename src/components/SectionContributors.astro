@@ -17,6 +17,8 @@ const ROLE_PRIORITY: Record<string, number> = {
   artist: 0,
   scientist: 1,
   organizer: 2,
+  zine: 3,
+  illustration: 4,
 };
 
 function bucket(roles: readonly string[]): number {
@@ -27,12 +29,7 @@ function bucket(roles: readonly string[]): number {
 const all = await getCollection('contributors');
 const items = all
   .map((entry) => entry.data)
-  .sort((a, b) => {
-    const ba = bucket(a.roles ?? []);
-    const bb = bucket(b.roles ?? []);
-    if (ba !== bb) return ba - bb;
-    return (a.order ?? 0) - (b.order ?? 0);
-  });
+  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 ---
 
 <section id="team" class="contributors">

@@ -65,6 +65,7 @@ export const getHero = () =>
   });
 
 export const getAbout = () => read<SectionTextData>('about', { heading: emptyBi, body: emptyBi });
+export const getCoproduction = () => read<SectionTextData>('coproduction', { heading: emptyBi, body: emptyBi });
 export const getTeamIntro = () => read<SectionTextData>('team-intro', { heading: emptyBi, body: emptyBi });
 export const getContributorsSection = () => read<HeadingOnly>('contributors-section', { heading: emptyBi });
 export const getLocationsSection = () => read<HeadingOnly>('locations-section', { heading: emptyBi });

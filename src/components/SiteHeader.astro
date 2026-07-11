@@ -1,6 +1,7 @@
 ---
+import { getCollection } from 'astro:content';
 import type { Locale } from '../i18n/strings';
-import { t, localePath } from '../i18n/strings';
+import { t, localePath, pickLang } from '../i18n/strings';
 
 interface Props {
   locale: Locale;
@@ -8,6 +9,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const labels = t(locale);
+
+const locations = (await getCollection('locations')).sort(
+  (a, b) => (a.data.order ?? 0) - (b.data.order ?? 0),
+);
 
 // On the homepage anchor links are pure hashes (intercepted for smooth scroll).
 // On other pages prefix with the home path so they navigate back, then the
@@ -43,6 +48,24 @@ const menuMaxLabel =
           <a href={item.href}>{item.label}</a>
         </li>
       ))}
+      <li class="nav-dropdown-wrap">
+        <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" data-gallery-trigger>
+          {labels.nav.gallery}
+        </button>
+        <ul class="nav-dropdown" role="menu" data-gallery-menu>
+          {locations.map((loc) => (
+            <li role="none">
+              <a
+                role="menuitem"
+                href={locale === 'de' ? `/orte/${loc.id}` : `/en/orte/${loc.id}`}
+                class="nav-dropdown-item"
+              >
+                {pickLang(loc.data.title, locale)}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </li>
     </ul>
   </nav>
 
@@ -80,6 +103,17 @@ const menuMaxLabel =
       {navItems.map((item) => (
         <li>
           <a href={item.href} class="mobile-menu-link" data-menu-link>{item.label}</a>
+        </li>
+      ))}
+      {locations.map((loc) => (
+        <li>
+          <a
+            href={locale === 'de' ? `/orte/${loc.id}` : `/en/orte/${loc.id}`}
+            class="mobile-menu-link mobile-menu-link--gallery"
+            data-menu-link
+          >
+            {pickLang(loc.data.title, locale)}
+          </a>
         </li>
       ))}
     </ul>
@@ -242,7 +276,112 @@ const menuMaxLabel =
     transform-origin: left;
   }
 
-  /* ── Mobile breakpoint ──────────────────────── */
+  /* ── Gallery dropdown ───────────────────────── */
+  .nav-dropdown-wrap {
+    position: relative;
+  }
+
+  .nav-dropdown-trigger {
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    font: inherit;
+    font-size: var(--nav-fs);
+    color: inherit;
+    cursor: pointer;
+    line-height: 1;
+    position: relative;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .nav-dropdown-trigger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .nav-dropdown-trigger:hover::after,
+  .nav-dropdown-trigger[aria-expanded="true"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .nav-list:hover .nav-dropdown-trigger {
+    color: var(--color-inactive);
+  }
+  .nav-list:hover .nav-dropdown-trigger:hover,
+  .nav-dropdown-trigger[aria-expanded="true"] {
+    color: var(--color-fg);
+  }
+
+  .nav-dropdown {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-4) var(--space-5);
+    position: absolute;
+    top: calc(100% + var(--space-4));
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: var(--color-header-bg);
+    min-width: 220px;
+    border-top: 1px solid color-mix(in oklab, var(--color-fg) 15%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .nav-dropdown.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-dropdown-item {
+    display: block;
+    padding: var(--space-1) 0;
+    color: var(--color-inactive);
+    text-decoration: none;
+    font-size: var(--fs-body);
+    white-space: nowrap;
+    position: relative;
+    width: fit-content;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .nav-dropdown-item::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--color-fg);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .nav-dropdown-item:hover {
+    color: var(--color-fg);
+  }
+  .nav-dropdown-item:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* smaller gallery links in mobile menu */
+  .mobile-menu-link--gallery {
+    font-size: clamp(24px, 7vw, 48px) !important;
+    color: var(--color-inactive);
+  }
+
+  /* ── End gallery dropdown ───────────────────── */
   @media (max-width: 640px) {
     .site-header {
       padding-inline: var(--padding-section-h-xs);
@@ -400,6 +539,33 @@ const menuMaxLabel =
 
   initMobileMenu();
   document.addEventListener('astro:page-load', initMobileMenu);
+
+  // ── Gallery dropdown ──────────────────────────
+  function initGalleryDropdown() {
+    const trigger = document.querySelector<HTMLButtonElement>('[data-gallery-trigger]');
+    const menu = document.querySelector<HTMLElement>('[data-gallery-menu]');
+    if (!trigger || !menu) return;
+    if (trigger.dataset.galleryInit === 'true') return;
+    trigger.dataset.galleryInit = 'true';
+
+    function setOpen(open: boolean) {
+      trigger!.setAttribute('aria-expanded', String(open));
+      menu!.classList.toggle('is-open', open);
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+
+  initGalleryDropdown();
+  document.addEventListener('astro:page-load', initGalleryDropdown);
 
   // Preserve scroll position across language switches
   function bindLangScrollSave() {

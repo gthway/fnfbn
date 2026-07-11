@@ -7,11 +7,12 @@ import SectionLocations from '../components/SectionLocations.astro';
 import SectionTexts from '../components/SectionTexts.astro';
 import SectionContributors from '../components/SectionContributors.astro';
 import SectionContact from '../components/SectionContact.astro';
-import { getHero, getAbout, getTeamIntro, getContact, getFooter } from '../lib/singletons';
+import { getHero, getAbout, getTeamIntro, getContact, getFooter, getCoproduction } from '../lib/singletons';
 
-const [hero, about, teamIntro, contact, footer] = await Promise.all([
+const [hero, about, coproduction, teamIntro, contact, footer] = await Promise.all([
   getHero(),
   getAbout(),
+  getCoproduction(),
   getTeamIntro(),
   getContact(),
   getFooter(),
@@ -27,6 +28,7 @@ const [hero, about, teamIntro, contact, footer] = await Promise.all([
       locale="de"
       blocks={[
         { id: 'about', data: about },
+        { id: 'coproduction', data: coproduction },
         { id: 'team', data: teamIntro },
       ]}
     />

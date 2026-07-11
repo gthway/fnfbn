@@ -18,7 +18,7 @@ const contributors = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: 'src/content/contributors' }),
   schema: z.object({
     name: z.string(),
-    roles: z.array(z.enum(['organizer', 'artist', 'scientist'])).default([]),
+    roles: z.array(z.enum(['organizer', 'artist', 'scientist','zine','illustration'])).default([]),
     photo: z.string().optional(),
     link: z.string().optional(),
     order: z.number().default(0),

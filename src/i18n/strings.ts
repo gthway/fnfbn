@@ -8,6 +8,7 @@ export const ui = {
       locations: 'Orte',
       about: 'Über',
       team: 'Team',
+      gallery: 'Galerie',
       contact: 'Kontakt',
       menuOpen: 'menü',
       menuClose: 'schließen',
@@ -23,9 +24,11 @@ export const ui = {
     contributors: {
       visitWebsite: 'Webseite besuchen',
       roles: {
-        organizer: 'Organisator*in',
-        artist: 'Künstler*in',
-        scientist: 'Wissenschaftler*in',
+        organizer: 'Orga',
+        artist: 'Kunst',
+        scientist: 'Wissenschaft',
+        zine: 'Zine Design',
+        illustration: 'Illustration'
       },
     },
     skipToContent: 'Zum Inhalt springen',
@@ -35,6 +38,7 @@ export const ui = {
       locations: 'Locations',
       about: 'About',
       team: 'Team',
+      gallery: 'Gallery',
       contact: 'Contact',
       menuOpen: 'menu',
       menuClose: 'close',
@@ -53,6 +57,8 @@ export const ui = {
         organizer: 'Organizer',
         artist: 'Artist',
         scientist: 'Scientist',
+        zine: 'Zine Designer',
+        illustration: 'Illustrator'
       },
     },
     skipToContent: 'Skip to content',

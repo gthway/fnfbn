@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getFooter } from '../../lib/singletons';
+import { pickLang } from '../../i18n/strings';
+
+export async function getStaticPaths() {
+  const locations = await getCollection('locations');
+  return locations.map((loc) => ({
+    params: { slug: loc.id },
+    props: { location: loc },
+  }));
+}
+
+const { location } = Astro.props;
+const locale = 'de';
+const title = pickLang(location.data.title, locale) ?? location.id;
+const footer = await getFooter();
+
+// Grab all images from public/gallery/<slug>/ automatically
+const allImages = import.meta.glob<{ default: string }>(
+  '/public/gallery/**/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true, import: 'default' }
+);
+const gallery = Object.entries(allImages)
+  .filter(([path]) => path.includes(`/gallery/${location.id}/`))
+  .map(([path]) => path.replace('/public', ''))
+  .sort();
+---
+
+<Layout title={`${title} – Galerie`} locale={locale}>
+  <SiteHeader locale={locale} />
+  <main class="gallery-page">
+    <header class="gallery-header reveal">
+      <a href="/" class="back-link">← Zurück</a>
+      <h1 class="gallery-title">{title}</h1>
+    </header>
+
+    {gallery.length === 0 ? (
+      <p class="gallery-empty reveal">Noch keine Fotos vorhanden.</p>
+    ) : (
+      <ul class="gallery-grid">
+        {gallery.map((src, i) => (
+          <li class="gallery-item reveal">
+            <a href={src} target="_blank" rel="noopener">
+              <img src={src} alt={`${title} – Foto ${i + 1}`} loading="lazy" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </main>
+  <SiteFooter locale={locale} data={footer} />
+</Layout>
+
+<style>
+  .gallery-page {
+    min-height: 100vh;
+    padding-top: var(--header-h);
+    padding-inline: var(--padding-section-h);
+    padding-bottom: var(--padding-section-v);
+    max-width: var(--section-max);
+    margin-inline: auto;
+  }
+
+  .gallery-header {
+    padding-block: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .back-link {
+    font-size: var(--fs-body);
+    color: var(--color-inactive);
+    text-decoration: none;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .back-link:hover {
+    color: var(--color-fg);
+  }
+
+  .gallery-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .gallery-empty {
+    color: var(--color-inactive);
+    padding-block: var(--space-10);
+  }
+
+  .gallery-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .gallery-item a:hover img {
+    opacity: 0.85;
+  }
+</style>
