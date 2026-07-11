@@ -2,5 +2,7 @@ name: "Tara Lovise Griegel"
 roles:
   - artist
 photo: ""
-link: ""
+links:
+  - label: "Email"
+    url: "mailto:taralovise@gmail.com"
 order: 8

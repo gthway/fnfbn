@@ -2,5 +2,7 @@ name: "Sebastian Unterrainer"
 roles:
   - artist
 photo: ""
-link: "www.sebastian-unterrainer.de"
+links: 
+  - label: "Website"
+    url: "www.sebastian-unterrainer.de"
 order: 6

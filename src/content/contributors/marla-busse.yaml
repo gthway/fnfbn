@@ -2,5 +2,9 @@ name: "Marla Busse"
 roles:
   - artist
 photo: ""
-link: ""
+links:
+  - label: "Instagram"
+    url: "https://www.instagram.com/marla_bebe_te/"
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/marlabusse/"
 order: 7

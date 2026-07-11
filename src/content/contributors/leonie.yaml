@@ -2,5 +2,7 @@ name: "Leonie Kalies"
 roles:
   - scientist
 photo: ""
-link: "https://www.linkedin.com/in/lkalies/"
+links: 
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/lkalies/"
 order: 14

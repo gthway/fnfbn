@@ -2,5 +2,11 @@ name: "Julia Nordholz"
 roles:
   - artist
 photo: ""
-link: ""
+links:
+  - label: "Website"
+    url: "https://www.julianordholz.de/"
+  - label: "Instagram"
+    url: "https://www.instagram.com/julianordholz"
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/julia-nordholz-24633b10a"
 order: 10

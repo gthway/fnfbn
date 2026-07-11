@@ -71,10 +71,14 @@ const items = all
                 )}
               </div>
 
-              {item.link && (
-                <a class="card-cta" href={item.link} target="_blank" rel="noopener noreferrer">
-                  <span>{labels.contributors.visitWebsite}&nbsp;&nbsp;→</span>
-                </a>
+              {item.links && item.links.length > 0 && (
+                <div class="card-ctas">
+                  {item.links.map((link) => (
+                    <a class="card-cta" href={link.url} target="_blank" rel="noopener noreferrer">
+                      <span>{link.label}&nbsp;&nbsp;→</span>
+                    </a>
+                  ))}
+                </div>
               )}
             </div>
           </li>
@@ -210,6 +214,10 @@ const items = all
     line-height: 1;
     text-decoration: none;
     transition: filter var(--dur-base) var(--ease-out);
+  }
+  .card-ctas {
+    display: flex;
+    flex-direction: column;
   }
   a.card-cta:hover {
     filter: brightness(0.96);

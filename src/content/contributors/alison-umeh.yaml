@@ -2,5 +2,7 @@ name: "Alison Umeh"
 roles:
   - artist
 photo: ""
-link: ""
+links:
+  - label: "Instagram"
+    url: "https://www.instagram.com/alison.umeh/"
 order: 9

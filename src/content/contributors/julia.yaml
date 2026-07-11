@@ -3,5 +3,9 @@ roles:
   - illustration
   - zine
 photo: ""
-link: ""
+links:
+  - label: "Website"
+    url: "https://sites.google.com/view/juliamoruchkova/home"
+  - label: "Instagram"
+    url: "https://www.instagram.com/tup_of_cea/"
 order: 11

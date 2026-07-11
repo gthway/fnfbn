@@ -20,7 +20,10 @@ const contributors = defineCollection({
     name: z.string(),
     roles: z.array(z.enum(['organizer', 'artist', 'scientist','zine','illustration'])).default([]),
     photo: z.string().optional(),
-    link: z.string().optional(),
+    links: z.array(z.object({
+      label: z.string(),
+      url: z.string(),
+    })).default([]),
     order: z.number().default(0),
   }),
 });
