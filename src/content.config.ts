@@ -11,6 +11,7 @@ const locations = defineCollection({
     time: bilingual,
     routeUrl: z.string().optional(),
     order: z.number().default(0),
+    credit: z.string().optional(),
   }),
 });
 

@@ -18,6 +18,7 @@ const { location } = Astro.props;
 const locale = 'de';
 const title = pickLang(location.data.title, locale) ?? location.id;
 const footer = await getFooter();
+const credit = location.data.credit;
 
 // Grab all images from public/gallery/<slug>/ automatically
 const allImages = import.meta.glob<{ default: string }>(
@@ -37,6 +38,10 @@ const gallery = Object.entries(allImages)
       <a href="/" class="back-link">← Zurück</a>
       <h1 class="gallery-title">{title}</h1>
     </header>
+
+    {credit && (
+      <p class="gallery-credit">{credit}</p>
+    )}
 
     {gallery.length === 0 ? (
       <p class="gallery-empty reveal">Noch keine Fotos vorhanden.</p>
@@ -113,5 +118,12 @@ const gallery = Object.entries(allImages)
   }
   .gallery-item a:hover img {
     opacity: 0.85;
+  }
+
+  .gallery-credit {
+    margin-top: var(--space-8);
+    font-size: var(--fs-body);
+    color: var(--color-inactive);
+    text-align: right;
   }
 </style>
