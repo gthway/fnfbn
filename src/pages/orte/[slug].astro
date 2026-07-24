@@ -120,10 +120,15 @@ const gallery = Object.entries(allImages)
     opacity: 0.85;
   }
 
-  .gallery-credit {
-    margin-top: var(--space-8);
+  .gallery-credits {
+    list-style: none;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-8);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
     font-size: var(--fs-body);
     color: var(--color-inactive);
-    text-align: right;
   }
 </style>
