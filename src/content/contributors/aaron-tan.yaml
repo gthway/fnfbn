@@ -3,5 +3,7 @@ roles:
   - organizer
   - zine
 photo: "/avatars/aaron.jpeg"
-links: []
+links: 
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/st-aaron/"
 order: 3
