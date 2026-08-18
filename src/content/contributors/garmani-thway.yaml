@@ -3,5 +3,7 @@ roles:
   - organizer
   - scientist
 photo: "/avatars/garmani.jpeg"
-links: []
+links:
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/garmani-t/"
 order: 4
