@@ -8,7 +8,7 @@ import SectionTexts from '../../components/SectionTexts.astro';
 import SectionContributors from '../../components/SectionContributors.astro';
 import SectionContact from '../../components/SectionContact.astro';
 import { getHero, getAbout, getTeamIntro, getContact, getFooter, getCoproduction } from '../../lib/singletons';
-import SectionFunders from '../components/SectionFunders.astro';
+import SectionFunders from '../../components/SectionFunders.astro';
 
 const [hero, about, coproduction, teamIntro, contact, footer] = await Promise.all([
   getHero(),
