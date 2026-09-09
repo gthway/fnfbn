@@ -1,0 +1,17 @@
+text:
+  de: "Das Projekt wird gefördert durch die Deutsche Forschungsgemeinschaft (DFG) im Rahmen der Exzellenzstrategie des Bundes und der Länder – EXC 2037 „CLICCS - Klima, Klimawandel und Gesellschaft“ – Projektnummer: 390683824, dem Leibniz-Institut zur Analyse des Biodiversitätswandels (LIB), der Claussen-Simon-Stiftung, der Alfred Toepfer Stiftung F.V.S. und der NUE aus Erträgen von BINGO!-Die Umweltlotterie."
+  en: "Das Projekt wird gefördert durch die Deutsche Forschungsgemeinschaft (DFG) im Rahmen der Exzellenzstrategie des Bundes und der Länder – EXC 2037 „CLICCS - Klima, Klimawandel und Gesellschaft“ – Projektnummer: 390683824, dem Leibniz-Institut zur Analyse des Biodiversitätswandels (LIB), der Claussen-Simon-Stiftung, der Alfred Toepfer Stiftung F.V.S. und der NUE aus Erträgen von BINGO!-Die Umweltlotterie."
+logos:
+  - src: /funders/ats_logo_rgb_52.gif
+    alt: "ATS"
+  - src: /funders/BINGO-Logo.png
+    alt: "Bingo"
+  - src: /funders/CSS_Logo_3_zeilig_Farbe.jpg
+    alt: "CSS"
+  - src: /funders/nue_blau_RGB.jpg
+    alt: "NUE"
+  - src: /funders/UHH_Wortmarken_CLICCS_DIN_A4_EN.png
+    alt: "CLICCS"
+  - src: /funders/logo-lib.png
+    alt: "LIB"
+    maxWidth: 350px

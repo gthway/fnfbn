@@ -76,6 +76,11 @@ export const getContact = () =>
     successTitle: emptyBi,
     successBody: emptyBi,
   });
+interface FundersData {
+  text: Bilingual;
+  logos: { src: string; alt: string; maxWidth?: string }[];
+}
+export const getFunders = () => read<FundersData>('funders', { text: emptyBi, logos: [] });
 export const getFooter = () =>
   read<FooterData>('footer', { formingLine: emptyBi, formedLine: emptyBi, subtitle: emptyBi });
 export const getImprint = () =>

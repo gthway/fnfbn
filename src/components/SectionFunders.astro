@@ -1,0 +1,62 @@
+---
+import type { Locale } from '../i18n/strings';
+import { pickLang } from '../i18n/strings';
+import { getFunders } from '../lib/singletons';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const data = await getFunders();
+const text = pickLang(data.text, locale) ?? '';
+---
+
+<section class="funders">
+  <ul class="funders-logos">
+    {data.logos.map((logo) => (
+      <li>
+        <img
+          src={logo.src}
+          alt={logo.alt}
+          style={logo.maxWidth ? `max-width: ${logo.maxWidth}` : undefined}
+        />
+      </li>
+    ))}
+  </ul>
+  {text && <p class="funders-text">{text}</p>}
+</section>
+
+<style>
+  .funders {
+    background: #ffffff;
+    color: #111;
+    padding: var(--space-10) var(--space-2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .funders-logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+  }
+
+  .funders-logos img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .funders-text {
+    margin: 0;
+    font-size: 11pt;
+    color: #666;
+    text-align: center;
+    max-width: 1500px;
+  }
+</style>
