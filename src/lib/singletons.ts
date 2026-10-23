@@ -68,7 +68,13 @@ export const getAbout = () => read<SectionTextData>('about', { heading: emptyBi,
 export const getCoproduction = () => read<SectionTextData>('coproduction', { heading: emptyBi, body: emptyBi });
 export const getTeamIntro = () => read<SectionTextData>('team-intro', { heading: emptyBi, body: emptyBi });
 export const getContributorsSection = () => read<HeadingOnly>('contributors-section', { heading: emptyBi });
-export const getLocationsSection = () => read<HeadingOnly>('locations-section', { heading: emptyBi });
+export interface LocationsSectionData {
+  heading: Bilingual;
+  finalHeading: Bilingual;
+}
+
+export const getLocationsSection = () =>
+  read<LocationsSectionData>('locations-section', { heading: emptyBi, finalHeading: emptyBi });
 export const getContact = () =>
   read<ContactData>('contact', {
     heading: emptyBi,

@@ -14,9 +14,13 @@ const heading = pickLang(section.heading, locale) ?? '';
 const labels = t(locale);
 
 const all = await getCollection('locations');
-const items = all
+const sorted = all
   .map((entry) => entry.data)
   .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+const items = sorted.filter((item) => !item.isFinal);
+const finalItems = sorted.filter((item) => item.isFinal);
+const finalHeading = pickLang(section.finalHeading, locale) ?? '';
 ---
 
 <section id="locations" class="locations">
@@ -54,6 +58,41 @@ const items = all
           );
         })}
       </ul>
+    )}
+    {finalItems.length > 0 && (
+      <>
+        <header class="locations-heading">
+          <h2 data-reveal>{finalHeading}</h2>
+        </header>
+        <ul class="cards cards--centered" data-reveal-group>
+          {finalItems.map((item) => {
+            const title = pickLang(item.title, locale) ?? '';
+            const date = pickLang(item.date, locale) ?? '';
+            const time = pickLang(item.time, locale) ?? '';
+            const url = item.routeUrl;
+            return (
+              <li class="card">
+                <div class="card-upper">
+                  <h3 class="card-title">{title}</h3>
+                  <div class="card-meta">
+                    {date && <p>{date}</p>}
+                    {time && <p>{time}</p>}
+                  </div>
+                </div>
+                {url ? (
+                  <a class="card-cta" href={url} target="_blank" rel="noopener noreferrer">
+                    <span>{labels.locations.routeTo}&nbsp;&nbsp;→</span>
+                  </a>
+                ) : (
+                  <div class="card-cta card-cta--disabled" aria-hidden="true">
+                    <span>{labels.locations.routeTo}&nbsp;&nbsp;→</span>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </>
     )}
   </div>
 </section>
@@ -135,7 +174,9 @@ const items = all
     margin: 0;
     text-align: center;
   }
-
+  .cards--centered {
+    justify-content: center;
+  }
   .card-cta {
     display: flex;
     align-items: center;

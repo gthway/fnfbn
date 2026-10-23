@@ -12,6 +12,7 @@ const locations = defineCollection({
     routeUrl: z.string().optional(),
     order: z.number().default(0),
     credit: z.string().optional(),
+    isFinal: z.boolean().default(false),
   }),
 });
 
